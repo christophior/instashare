@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="instashare">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0.65" y2="1">
+      <stop offset="0" stop-color="#5AC8FA"/>
+      <stop offset="0.55" stop-color="#3E8FE8"/>
+      <stop offset="1" stop-color="#5856D6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="114" fill="url(#g)"/>
+  <g fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M214 250H176a36 36 0 0 0-36 36v98a36 36 0 0 0 36 36h160a36 36 0 0 0 36-36v-98a36 36 0 0 0-36-36h-38"/>
+    <path d="M256 320V110"/>
+    <path d="M190 176l66-66 66 66"/>
+  </g>
+</svg>

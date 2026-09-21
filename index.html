@@ -1,58 +1,306 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-	<title>instashare</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-	<link rel="stylesheet" href="assets/css/main.css" />
-	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
-	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+	<title>instashare — share photos to Instagram from your Mac</title>
+	<meta name="description"
+		content="instashare was a small macOS app for sharing your photographs to Instagram straight from your Mac. It is no longer maintained." />
+	<link rel="canonical" href="https://instashare.christophior.com/" />
+
+	<!-- Icons -->
+	<link rel="icon" href="/favicon.ico" sizes="48x48" />
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<link rel="manifest" href="/site.webmanifest" />
+	<meta name="theme-color" content="#0a1020" />
+
+	<!-- Link previews -->
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="instashare" />
+	<meta property="og:title" content="instashare" />
+	<meta property="og:description" content="Share your photographs to Instagram, straight from your Mac. An archived project." />
+	<meta property="og:url" content="https://instashare.christophior.com/" />
+	<meta property="og:image" content="https://instashare.christophior.com/assets/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="The instashare app icon above the instashare wordmark." />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="instashare" />
+	<meta name="twitter:description" content="Share your photographs to Instagram, straight from your Mac. An archived project." />
+	<meta name="twitter:image" content="https://instashare.christophior.com/assets/og-image.png" />
+
+	<style>
+		:root {
+			--bg: #0a1020;
+			--bg-soft: rgba(255, 255, 255, 0.035);
+			--fg: #f4f7fc;
+			--fg-muted: #93a4c2;
+			--border: rgba(147, 164, 194, 0.22);
+			--accent: #5ac8fa;
+			--accent-deep: #5856d6;
+			--amber: #f5a524;
+		}
+
+		@media (prefers-color-scheme: light) {
+			:root {
+				--bg: #f7f9fc;
+				--bg-soft: rgba(10, 16, 32, 0.03);
+				--fg: #101a2e;
+				--fg-muted: #5a6b87;
+				--border: rgba(16, 26, 46, 0.14);
+				--accent: #1f8ad4;
+				--accent-deep: #4b49c9;
+			}
+		}
+
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+		}
+
+		html {
+			-webkit-text-size-adjust: 100%;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			background: var(--bg);
+			color: var(--fg);
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+				Helvetica, Arial, sans-serif;
+			font-size: 17px;
+			line-height: 1.65;
+			-webkit-font-smoothing: antialiased;
+			position: relative;
+			overflow-x: hidden;
+		}
+
+		/* Ambient glow, purely decorative */
+		body::before {
+			content: "";
+			position: fixed;
+			inset: -30vmax 0 auto -20vmax;
+			width: 90vmax;
+			height: 90vmax;
+			border-radius: 50%;
+			background: radial-gradient(circle,
+					color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+					color-mix(in srgb, var(--accent-deep) 10%, transparent) 42%,
+					transparent 68%);
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		main,
+		footer {
+			position: relative;
+			z-index: 1;
+		}
+
+		main {
+			flex: 1;
+			width: 100%;
+			max-width: 43rem;
+			margin: 0 auto;
+			padding: clamp(3.5rem, 11vh, 7rem) 1rem 4rem;
+			text-align: center;
+		}
+
+		.mark {
+			width: 104px;
+			height: 104px;
+			filter: drop-shadow(0 14px 34px color-mix(in srgb, var(--accent-deep) 40%, transparent));
+		}
+
+		h1 {
+			margin: 1.75rem 0 0;
+			font-size: clamp(2.6rem, 9vw, 4rem);
+			font-weight: 700;
+			letter-spacing: -0.035em;
+			line-height: 1.05;
+		}
+
+		.tagline {
+			margin: 1rem auto 0;
+			max-width: 30rem;
+			font-size: clamp(1.05rem, 3.4vw, 1.3rem);
+			color: var(--fg-muted);
+			text-wrap: balance;
+		}
+
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.6rem;
+			margin-top: 2rem;
+			padding: 0.5rem 1.1rem;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			background: var(--bg-soft);
+			font-size: 0.78rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: var(--fg-muted);
+		}
+
+		.badge::before {
+			content: "";
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: var(--amber);
+			box-shadow: 0 0 10px color-mix(in srgb, var(--amber) 75%, transparent);
+		}
+
+		.card {
+			margin-top: 3.25rem;
+			padding: 1.75rem clamp(1.1rem, 4vw, 2rem);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			background: var(--bg-soft);
+			text-align: left;
+		}
+
+		.card h2 {
+			margin: 0 0 0.75rem;
+			font-size: 1.05rem;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+		}
+
+		.card p {
+			margin: 0 0 0.9rem;
+			color: var(--fg-muted);
+		}
+
+		.card p:last-child {
+			margin-bottom: 0;
+		}
+
+		.links {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			justify-content: center;
+			margin-top: 2.25rem;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.55rem;
+			padding: 0.7rem 1.4rem;
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			background: var(--bg-soft);
+			color: var(--fg);
+			font-size: 0.95rem;
+			font-weight: 500;
+			text-decoration: none;
+			transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+		}
+
+		.btn:hover,
+		.btn:focus-visible {
+			border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+			background: color-mix(in srgb, var(--accent) 10%, transparent);
+			transform: translateY(-1px);
+		}
+
+		.btn svg {
+			width: 17px;
+			height: 17px;
+			flex: none;
+		}
+
+		footer {
+			padding: 2rem 1rem 2.5rem;
+			text-align: center;
+			font-size: 0.87rem;
+			color: var(--fg-muted);
+		}
+
+		footer a {
+			color: inherit;
+			text-decoration-color: var(--border);
+			text-underline-offset: 3px;
+		}
+
+		footer a:hover {
+			color: var(--fg);
+		}
+
+		:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 3px;
+			border-radius: 6px;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+
+			*,
+			*::before,
+			*::after {
+				transition: none !important;
+			}
+		}
+	</style>
 </head>
 
 <body>
 
-	<!-- Main -->
-	<div id="main">
+	<main>
+		<img class="mark" src="/favicon.svg" width="104" height="104"
+			alt="The instashare icon: a share arrow rising out of a tray." />
 
-		<!-- Header -->
-		<header>
-			<h2>instashare</h2>
-			<p>a beautiful way to share your photographs directly to instagram from your mac</p>
-		</header>
+		<h1>instashare</h1>
+		<p class="tagline">Share your photographs to Instagram, straight from your Mac.</p>
 
-		<!-- Banner -->
-		<section class="banner">
-			<script src="https://gumroad.com/js/gumroad-embed.js"></script>
-			<div class="gumroad-product-embed" data-gumroad-product-id="instashare">
-				<a href="https://gumroad.com/l/instashare">Loading...</a>
-			</div>
+		<p class="badge">Archived project</p>
+
+		<section class="card">
+			<h2>This project is no longer maintained</h2>
+			<p>
+				instashare was a small macOS app I built in 2019, back when posting to Instagram
+				from a desktop meant reaching for your phone. It is no longer developed, supported,
+				or available for purchase.
+			</p>
+			<p>
+				The page is kept online as a record of the project. If you landed here looking for a
+				download, there isn&rsquo;t one &mdash; Instagram now supports posting from the web
+				directly.
+			</p>
 		</section>
 
+		<nav class="links">
+			<a class="btn" href="https://github.com/christophior/instashare">
+				<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+					<path
+						d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+				</svg>
+				View on GitHub
+			</a>
+			<a class="btn" href="https://christophior.com">
+				<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
+					stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13Z" />
+					<path d="M1.5 8h13M8 1.5c1.7 1.9 2.6 4.1 2.6 6.5S9.7 12.6 8 14.5C6.3 12.6 5.4 10.4 5.4 8S6.3 3.4 8 1.5Z" />
+				</svg>
+				More projects
+			</a>
+		</nav>
+	</main>
 
-	</div>
-
-	<!-- Footer -->
-	<div id="footer">
-		<!-- <ul class="joined-icons">
-			<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-			<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-			<li><a href="#" class="icon fa-github"><span class="label">GitHub</span></a></li>
-			<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-			<li><a href="#" class="icon fa-linkedin"><span class="label">LinkedIn</span></a></li>
-		</ul> -->
-		<p class="copyright">&copy; christophior</p>
-	</div>
-
-	<!-- Scripts -->
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/jquery.dropotron.min.js"></script>
-	<script src="assets/js/jquery.scrollex.min.js"></script>
-	<script src="assets/js/skel.min.js"></script>
-	<script src="assets/js/util.js"></script>
-	<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-	<script src="assets/js/main.js"></script>
+	<footer>
+		<p>&copy; <a href="https://christophior.com">christophior</a></p>
+	</footer>
 
 </body>
 
